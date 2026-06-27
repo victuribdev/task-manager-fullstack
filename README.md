@@ -233,9 +233,9 @@ compatível com o `ParamsDictionary` do Express e mantendo o `id` tipado.
 
 **O que faria diferente com mais tempo?**
 Optimistic updates no TanStack Query (feedback instantâneo ao concluir/excluir), edição
-de título inline, paginação e testes no frontend (Testing Library + Playwright).
+de título inline e paginação para listas grandes.
 
 **Alguma melhoria que deixou de fora por limite de tempo?**
-Persistência em banco (bastaria trocar o repository) e autenticação — ambas fora do escopo
-obrigatório. O deploy (sugestão opcional da proposta) foi feito: Vercel (frontend) + Render
-(backend). Priorizei entregar os requisitos com código limpo, tipado e testado.
+Testes automatizados no frontend (Testing Library + E2E com Playwright) e pequenos
+refinamentos de UX e acessibilidade. O armazenamento em memória, por outro lado, foi uma
+decisão consciente — a proposta permite e atende bem o escopo, não foi limitação de tempo.
