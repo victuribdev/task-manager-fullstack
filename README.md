@@ -236,5 +236,6 @@ Optimistic updates no TanStack Query (feedback instantâneo ao concluir/excluir)
 de título inline, paginação e testes no frontend (Testing Library + Playwright).
 
 **Alguma melhoria que deixou de fora por limite de tempo?**
-Persistência em banco (trocando só o repository), autenticação e deploy — fora do escopo
-obrigatório. Priorizei entregar os requisitos com código limpo, tipado e testado.
+Persistência em banco (bastaria trocar o repository) e autenticação — ambas fora do escopo
+obrigatório. O deploy (sugestão opcional da proposta) foi feito: Vercel (frontend) + Render
+(backend). Priorizei entregar os requisitos com código limpo, tipado e testado.
