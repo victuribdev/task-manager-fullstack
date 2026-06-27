@@ -60,8 +60,12 @@ npm run dev
 
 A API sobe em **http://localhost:3000**.
 
-**Variáveis de ambiente** (opcional): a única variável é `PORT` (padrão `3000`).
-Não é necessário criar `.env` — há um valor padrão. Para mudar a porta:
+**Variáveis de ambiente** (todas opcionais — há padrões, não precisa de `.env` local):
+
+| Variável | Padrão | Descrição |
+|----------|--------|-----------|
+| `PORT` | `3000` | Porta do servidor (em deploy, o host injeta automaticamente) |
+| `CORS_ORIGIN` | `*` | Origem permitida no CORS. Em produção, aponte para a URL do frontend |
 
 ```bash
 # Windows (PowerShell)
@@ -69,6 +73,10 @@ $env:PORT=4000; npm run dev
 # Linux/macOS
 PORT=4000 npm run dev
 ```
+
+> Em produção a API inicia com **3 tarefas de exemplo** (seed). O armazenamento é em
+> memória, então os dados reiniciam quando o serviço reinicia/hiberna — comportamento
+> esperado para este escopo.
 
 ### 2. Frontend (interface)
 
@@ -161,6 +169,35 @@ npm test
 | `npm run build` | Build de produção |
 | `npm run preview` | Pré-visualiza o build |
 | `npm run typecheck` | Checagem de tipos sem emitir |
+
+---
+
+## Deploy
+
+Sugestão da própria proposta: **Vercel (frontend) + Railway (backend)**. Como é um
+monorepo, cada serviço aponta para a sua subpasta.
+
+### Backend no Railway
+
+1. **New Project → Deploy from GitHub repo** → selecione este repositório.
+2. Em **Settings → Root Directory**, defina **`backend`**.
+3. O Railway detecta Node automaticamente: roda `npm install` → `npm run build` → `npm start`.
+   A porta vem da env `PORT` (injetada pelo Railway — já lida no código).
+4. (Opcional) Em **Variables**, defina `CORS_ORIGIN` com a URL do frontend para restringir o CORS.
+5. Em **Settings → Networking**, gere um **domínio público** e copie a URL (ex.: `https://seu-app.up.railway.app`).
+
+> Dica: se o build não instalar as devDependencies, defina a variável
+> `NPM_CONFIG_PRODUCTION=false` no Railway (garante o `typescript` disponível no build).
+
+### Frontend na Vercel
+
+1. **Add New → Project** → importe este repositório.
+2. Em **Root Directory**, selecione **`frontend`** (framework Vite é detectado sozinho).
+3. Em **Environment Variables**, adicione `VITE_API_URL` = URL pública do backend (passo 5 acima).
+4. **Deploy**. A Vercel roda `npm run build` e publica a pasta `dist`.
+
+> Ordem recomendada: subir o **backend primeiro** para ter a URL, depois configurar o
+> `VITE_API_URL` no frontend.
 
 ---
 

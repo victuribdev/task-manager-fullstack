@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express, { type Express } from 'express';
+import { env } from './config/env';
 import { errorHandler } from './middlewares/errorHandler';
 import { notFound } from './middlewares/notFound';
 import { taskRouter } from './routes/task.routes';
@@ -7,7 +8,7 @@ import { taskRouter } from './routes/task.routes';
 export const createApp = (): Express => {
   const app = express();
 
-  app.use(cors());
+  app.use(cors({ origin: env.corsOrigin }));
   app.use(express.json());
 
   app.get('/health', (_req, res) => {
