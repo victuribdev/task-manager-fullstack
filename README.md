@@ -74,9 +74,8 @@ $env:PORT=4000; npm run dev
 PORT=4000 npm run dev
 ```
 
-> Em produção a API inicia com **3 tarefas de exemplo** (seed). O armazenamento é em
-> memória, então os dados reiniciam quando o serviço reinicia/hiberna — comportamento
-> esperado para este escopo.
+> O armazenamento é **em memória** (a proposta permite): a lista inicia vazia e os dados
+> reiniciam quando o serviço reinicia/hiberna — comportamento esperado para este escopo.
 
 ### 2. Frontend (interface)
 

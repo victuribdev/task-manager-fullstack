@@ -1,9 +1,5 @@
 import { createApp } from './app';
 import { env } from './config/env';
-import { taskRepository } from './repositories/task.repository';
-import { seedTasks } from './seed';
-
-seedTasks(taskRepository);
 
 const app = createApp();
 
