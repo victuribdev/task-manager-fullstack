@@ -1,0 +1,187 @@
+# Task Manager
+
+Aplicação de gerenciamento de tarefas com **backend REST em Node.js + TypeScript** e
+**frontend em React + TypeScript**. Permite criar, listar, filtrar, concluir e excluir tarefas.
+
+- **Backend:** Node.js, Express, Zod, dados em memória — `strict: true`, sem `any`.
+- **Frontend:** React, Vite, TanStack Query, CSS Modules — `strict: true`, sem `any`.
+
+---
+
+## Estrutura do projeto
+
+```
+task_manager/
+├── backend/                 # API REST (Node + Express + TypeScript)
+│   ├── src/
+│   │   ├── controllers/     # handlers HTTP (req/res)
+│   │   ├── services/        # regras de negócio
+│   │   ├── repositories/    # armazenamento em memória
+│   │   ├── routes/          # definição das rotas
+│   │   ├── middlewares/     # validação (Zod) e tratamento de erros
+│   │   ├── schemas/         # schemas Zod + tipos derivados
+│   │   ├── errors/          # classes de erro da aplicação
+│   │   ├── types/           # interface Task
+│   │   ├── config/          # variáveis de ambiente
+│   │   ├── app.ts           # configura o app Express
+│   │   └── index.ts         # sobe o servidor
+│   └── tests/               # testes de integração (Vitest + Supertest)
+└── frontend/                # interface React (Vite)
+    └── src/
+        ├── api/             # chamadas HTTP isoladas (service)
+        ├── hooks/           # estado assíncrono (TanStack Query)
+        ├── components/      # componentes de UI (1 pasta por componente)
+        ├── utils/           # utilitários (ex.: formatação de data)
+        └── types/           # tipos compartilhados
+```
+
+---
+
+## Pré-requisitos
+
+- **Node.js >= 18** (usa `crypto.randomUUID` e `fetch` nativos)
+- **npm** (acompanha o Node)
+
+> O backend e o frontend são instalados e executados de forma independente.
+
+---
+
+## Como rodar
+
+> Abra **dois terminais**: um para o backend e outro para o frontend.
+
+### 1. Backend (API)
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+A API sobe em **http://localhost:3000**.
+
+**Variáveis de ambiente** (opcional): a única variável é `PORT` (padrão `3000`).
+Não é necessário criar `.env` — há um valor padrão. Para mudar a porta:
+
+```bash
+# Windows (PowerShell)
+$env:PORT=4000; npm run dev
+# Linux/macOS
+PORT=4000 npm run dev
+```
+
+### 2. Frontend (interface)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+A interface sobe em **http://localhost:5173**.
+
+**Variáveis de ambiente:** o frontend lê `VITE_API_URL` para localizar a API.
+Há um padrão (`http://localhost:3000`), então funciona sem configuração. Para apontar
+para outra URL, copie o exemplo e ajuste:
+
+```bash
+cp .env.example .env   # depois edite VITE_API_URL se necessário
+```
+
+---
+
+## API REST
+
+Base URL: `http://localhost:3000`
+
+| Método | Rota | Descrição | Sucesso | Erros |
+|--------|------|-----------|---------|-------|
+| `GET` | `/tasks` | Lista tarefas. Aceita `?status=pending\|done` | `200` | `400` (status inválido) |
+| `POST` | `/tasks` | Cria tarefa. Body: `{ "title": string }` | `201` | `400` (título vazio) |
+| `PATCH` | `/tasks/:id` | Atualiza `title` e/ou `status` | `200` | `400`, `404` |
+| `DELETE` | `/tasks/:id` | Remove tarefa pelo ID | `200` | `404` |
+
+Erros inesperados retornam `500`. Modelo da tarefa:
+
+```ts
+interface Task {
+  id: string;        // UUID
+  title: string;     // obrigatório, não vazio
+  status: 'pending' | 'done';
+  createdAt: string; // ISO 8601
+}
+```
+
+Exemplos:
+
+```bash
+# Criar
+curl -X POST http://localhost:3000/tasks \
+  -H "Content-Type: application/json" -d '{"title":"Estudar TypeScript"}'
+
+# Listar pendentes
+curl "http://localhost:3000/tasks?status=pending"
+
+# Concluir
+curl -X PATCH http://localhost:3000/tasks/<id> \
+  -H "Content-Type: application/json" -d '{"status":"done"}'
+
+# Excluir
+curl -X DELETE http://localhost:3000/tasks/<id>
+```
+
+---
+
+## Testes
+
+Testes de integração do backend (rotas, validações e status codes):
+
+```bash
+cd backend
+npm test
+```
+
+---
+
+## Scripts disponíveis
+
+**Backend** (`/backend`)
+| Script | Ação |
+|--------|------|
+| `npm run dev` | Sobe a API com reload (tsx watch) |
+| `npm run build` | Compila para `dist/` |
+| `npm start` | Roda a versão compilada |
+| `npm test` | Executa os testes |
+| `npm run typecheck` | Checagem de tipos sem emitir |
+
+**Frontend** (`/frontend`)
+| Script | Ação |
+|--------|------|
+| `npm run dev` | Servidor de desenvolvimento (Vite) |
+| `npm run build` | Build de produção |
+| `npm run preview` | Pré-visualiza o build |
+| `npm run typecheck` | Checagem de tipos sem emitir |
+
+---
+
+## Decisões técnicas
+
+**Por que escolheu a estrutura de pastas que usou?**
+No backend, arquitetura em camadas (**route → controller → service → repository**): cada
+uma com uma responsabilidade só, fácil de testar e de trocar o "banco em memória" por um
+real sem mexer no resto. No frontend, separei `api/` (HTTP puro), `hooks/` (estado
+assíncrono com TanStack Query) e `components/` (apenas UI) — nenhum componente faz `fetch`
+direto. Um componente por pasta, com seu CSS Module.
+
+**Teve alguma dificuldade? Como resolveu?**
+O tipo `params` dos handlers do Express não aceitava uma interface `{ id: string }`.
+Resolvi declarando a interface com index signature (`[key: string]: string`), tornando-a
+compatível com o `ParamsDictionary` do Express e mantendo o `id` tipado.
+
+**O que faria diferente com mais tempo?**
+Optimistic updates no TanStack Query (feedback instantâneo ao concluir/excluir), edição
+de título inline, paginação e testes no frontend (Testing Library + Playwright).
+
+**Alguma melhoria que deixou de fora por limite de tempo?**
+Persistência em banco (trocando só o repository), autenticação e deploy — fora do escopo
+obrigatório. Priorizei entregar os requisitos com código limpo, tipado e testado.
