@@ -6,6 +6,17 @@ Aplicação de gerenciamento de tarefas com **backend REST em Node.js + TypeScri
 - **Backend:** Node.js, Express, Zod, dados em memória — `strict: true`, sem `any`.
 - **Frontend:** React, Vite, TanStack Query, CSS Modules — `strict: true`, sem `any`.
 
+## 🔗 Demo
+
+| | Link |
+|---|---|
+| 🖥️ **App (frontend)** | https://task-manager-fullstack-two-kappa.vercel.app/ |
+| 🔌 **API (backend)** | https://task-manager-fullstack-c8nb.onrender.com/tasks |
+
+> O backend está no plano gratuito do Render e **hiberna após ~15 min ocioso**: o primeiro
+> acesso depois disso pode levar ~50s para "acordar" (cold start). Os dados são em memória,
+> então a lista inicia vazia e reinicia quando o serviço reinicia.
+
 ---
 
 ## Estrutura do projeto
