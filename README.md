@@ -174,26 +174,32 @@ npm test
 
 ## Deploy
 
-Sugestão da própria proposta: **Vercel (frontend) + Railway (backend)**. Como é um
-monorepo, cada serviço aponta para a sua subpasta.
+**Vercel (frontend) + Render (backend)** — ambos com plano gratuito. Como é um monorepo,
+cada serviço aponta para a sua subpasta.
 
-### Backend no Railway
+### Backend no Render
 
-1. **New Project → Deploy from GitHub repo** → selecione este repositório.
-2. Em **Settings → Root Directory**, defina **`backend`**.
-3. O Railway detecta Node automaticamente: roda `npm install` → `npm run build` → `npm start`.
-   A porta vem da env `PORT` (injetada pelo Railway — já lida no código).
-4. (Opcional) Em **Variables**, defina `CORS_ORIGIN` com a URL do frontend para restringir o CORS.
-5. Em **Settings → Networking**, gere um **domínio público** e copie a URL (ex.: `https://seu-app.up.railway.app`).
+1. **New → Web Service** → conecte este repositório do GitHub.
+2. Configure:
+   - **Root Directory:** `backend`
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `npm start`
+   - **Instance Type:** `Free`
+3. (Opcional) Em **Environment**, adicione `CORS_ORIGIN` com a URL do frontend para restringir o CORS.
+4. **Create Web Service**. Ao final, copie a URL pública (ex.: `https://seu-app.onrender.com`).
 
-> Dica: se o build não instalar as devDependencies, defina a variável
-> `NPM_CONFIG_PRODUCTION=false` no Railway (garante o `typescript` disponível no build).
+> A porta vem da env `PORT`, injetada pelo Render — já lida no código.
+> No plano free o serviço hiberna após ~15 min ociosos; a primeira requisição depois
+> disso leva alguns segundos para "acordar" (cold start).
+
+> Alternativas gratuitas equivalentes: **Koyeb** ou **Railway** (este último hoje exige
+> cartão/trial).
 
 ### Frontend na Vercel
 
 1. **Add New → Project** → importe este repositório.
 2. Em **Root Directory**, selecione **`frontend`** (framework Vite é detectado sozinho).
-3. Em **Environment Variables**, adicione `VITE_API_URL` = URL pública do backend (passo 5 acima).
+3. Em **Environment Variables**, adicione `VITE_API_URL` = URL pública do backend (passo 4 acima).
 4. **Deploy**. A Vercel roda `npm run build` e publica a pasta `dist`.
 
 > Ordem recomendada: subir o **backend primeiro** para ter a URL, depois configurar o
